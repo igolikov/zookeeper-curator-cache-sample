@@ -1,0 +1,44 @@
+version: '3.6'
+services:
+  zookeeper:
+    container_name: zookeeper
+    image: zookeeper
+    ports:
+      - 2181:2181
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+    networks:
+      - internal.network
+  zoonavigator:
+    container_name: zoonavigator
+    image: elkozmon/zoonavigator
+    ports:
+      - 9000:9000
+    networks:
+      - internal.network
+  initiator:
+    container_name: initiator
+    image: initiator
+    networks:
+      - internal.network
+    depends_on:
+      - zookeeper
+  node1:
+    container_name: node1
+    image: node
+    networks:
+      - internal.network
+    depends_on:
+      - zookeeper
+  node2:
+    container_name: node2
+    image: node
+    networks:
+      - internal.network
+    depends_on:
+      - zookeeper
+networks:
+  internal.network:
+    name: internal.services.network
